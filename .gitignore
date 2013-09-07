@@ -22,3 +22,8 @@ lightingengine/lightingengine.opensdf
 *.log
 *.idb
 *.lastbuildstate
+lightingengine/lightingengine/lightingengine.vcxproj
+lightingengine/lightingengine/lightingengine.vcxproj.filters
+lightingengine/lightingengine/log.txt
+lightingengine/lightingengine.v11.suo
+lightingengine/lightingengine.sdf
