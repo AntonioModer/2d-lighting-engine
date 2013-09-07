@@ -22,6 +22,8 @@ lightingengine/lightingengine/log.txt
 *.pdb
 *.log
 *.idb
+*.sdf
+*.suo
 *.lastbuildstate
 *.vcxproj
 *.vcxproj.filters
