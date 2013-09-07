@@ -4,7 +4,9 @@
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+#include <iostream>
 #include <fstream>
+#include <sstream>
 
 #include "GL/gl.h"
 #include "GL/glu.h"
@@ -12,8 +14,6 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_opengl.h"
-
-long nanoSeconds();
 
 class Game {
 public:
@@ -32,6 +32,13 @@ public:
 
 	void tick();
 	void draw();
+	
+	void log(std::string);
+	void log(std::string, int);
+	void log(std::string, double);
+	void logln(std::string);
+	void logln(std::string, int);
+	void logln(std::string, double);
 
 private:
 	SDL_Window *window;
@@ -40,8 +47,8 @@ private:
 	std::fstream logFile;
 
 	int screenWidth, screenHeight;
-
 	long ticks;
-
 	bool keepGoing;
+
+	std::string baseWindowTitle;
 };
