@@ -8,12 +8,15 @@
 #include <fstream>
 #include <sstream>
 
-#include "GL/gl.h"
-#include "GL/glu.h"
+#include <gl/glew.h>
+#include <gl/GL.h>
+#include <gl/GLU.h>
 #define NO_SDL_GLEXT
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_opengl.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_opengl.h>
+
+extern std::fstream logFile;
 
 class Game {
 public:
@@ -21,6 +24,8 @@ public:
 
 	void init();
 	void deinit();
+
+	void resizeWindow(int, int);
 
 	void start();
 	void stop();
@@ -32,19 +37,12 @@ public:
 
 	void tick();
 	void draw();
-	
-	void log(std::string);
-	void log(std::string, int);
-	void log(std::string, double);
-	void logln(std::string);
-	void logln(std::string, int);
-	void logln(std::string, double);
 
 private:
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 
-	std::fstream logFile;
+	SDL_GLContext glcontext;
 
 	int screenWidth, screenHeight;
 	long ticks;

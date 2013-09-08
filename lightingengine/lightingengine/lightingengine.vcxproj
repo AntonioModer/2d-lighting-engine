@@ -49,7 +49,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\Joshua\Documents\SDL2-2.0.0\lib\x86;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glu32.lib;opengl32.lib;glew32.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -72,9 +72,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Image.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="pic.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h" />

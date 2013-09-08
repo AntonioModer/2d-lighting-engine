@@ -2,6 +2,8 @@
 
 #include "Image.h"
 
+std::fstream logFile;
+
 Game::Game(int w, int h) {
 	screenWidth = w;
 	screenHeight = h;
@@ -13,41 +15,98 @@ Game::Game(int w, int h) {
 SDL_Texture *tex;
 
 void Game::init() {
-	SDL_Init(SDL_INIT_EVERYTHING);
-
-	window = SDL_CreateWindow(baseWindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
-	renderer = SDL_CreateRenderer(window, -1, 0);
-
-	keepGoing = true;
-
 	//Set up log file
 	logFile.open("log.txt", std::fstream::out);
+	logFile << "Initializing...\n";
+
+	SDL_Init(SDL_INIT_EVERYTHING);
+
+	if((window = SDL_CreateWindow(baseWindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_OPENGL)) == 0) {
+		logFile << "Error creating window: " << SDL_GetError() << std::endl;
+		stop();
+		return;
+	}
+	logFile << "Created window" << std::endl;
+	if((renderer = SDL_CreateRenderer(window, -1, 0)) == NULL) {
+		logFile << "Error creating renderer: " << SDL_GetError() << std::endl;
+		stop();
+		return;
+	}
+	logFile << "Created renderer" << std::endl;
+	if((glcontext = SDL_GL_CreateContext(window)) == NULL) {
+		logFile << "Error creating OpenGL context: " << SDL_GetError() << std::endl;
+		stop();
+		return;
+	}
+	logFile << "Created OpenGL context" << std::endl;
 
 	//Initialize OpenGL
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	resizeWindow(screenWidth, screenHeight);
 
 	//Initialize things here
 	tex = loadTexture(renderer, "pic.png");
+
+	logFile << "Finished initializing" << std::endl;
 }
 
 void Game::deinit() {
 	//Free things here (be clean!!)
 
+	logFile << "Deinitializing" << std::endl;
+
 	logFile.close();
+
+	SDL_GL_DeleteContext(glcontext);
+
+	SDL_DestroyWindow(window);
 
 	SDL_Quit();
 }
 
-void Game::start() {
-	init();
+void Game::resizeWindow(int width, int height) {
+	if(height == 0)
+		height = 1;
 
+	logFile << "Resizing window to " << width << "x" << height << "..." << std::endl;
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	//glBlendEquation(GL_FUNC_ADD);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+
+	glViewport(0, 0, screenWidth, screenHeight);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glOrtho(0.0f, screenWidth, screenHeight, 0.0f, -1.0f, 1.0f);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	logFile << "Finished resizing" << std::endl;
+}
+
+void Game::start() {
+	logFile << "Game starting" << std::endl;
+	keepGoing = true;
 	run();
 }
 
 void Game::stop() {
-	deinit();
+	keepGoing = false;
 }
 
 void Game::run() {
+	init();
+
 	SDL_Event event;
 
 	//Timing Variables
@@ -97,6 +156,8 @@ void Game::run() {
 		//Lets let the computer rest
 		SDL_Delay(1);
 	}
+
+	deinit();
 }
 
 void Game::onEvent(SDL_Event *event) {
@@ -111,7 +172,11 @@ void Game::onEvent(SDL_Event *event) {
 }
 
 void Game::onKeydown(SDL_KeyboardEvent *key) {
-	
+	switch(key->keysym.sym) {
+	case SDLK_ESCAPE:
+		stop();
+		break;
+	}
 }
 
 void Game::tick() {
@@ -121,33 +186,10 @@ void Game::tick() {
 }
 
 void Game::draw() {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	SDL_RenderClear(renderer);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
 
 	//Draw things here
-	renderTexture(renderer, tex, 0, 0);
 
-	SDL_RenderPresent(renderer);
-}
-	
-void Game::log(std::string s) {
-	logFile << s;
-}
-void Game::log(std::string s, int i) {
-	logFile << s << i;
-}
-void Game::log(std::string s, double d) {
-	logFile << s << d;
-}
-void Game::logln(std::string s) {
-	log(s);
-	log("\n");
-}
-void Game::logln(std::string s, int i) {
-	log(s, i);
-	log("\n");
-}
-void Game::logln(std::string s, double d) {
-	log(s, d);
-	log("\n");
+	SDL_GL_SwapWindow(window);
 }
