@@ -1,5 +1,11 @@
 #pragma once
 
+/* Resources:
+
+https://www.youtube.com/watch?v=LL9BrNrO11o
+http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/dynamic-2d-soft-shadows-r2032
+
+*/
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -15,6 +21,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_opengl.h>
+
+#include "Scene.h"
+#include "Polygon.h"
 
 extern std::fstream logFile;
 

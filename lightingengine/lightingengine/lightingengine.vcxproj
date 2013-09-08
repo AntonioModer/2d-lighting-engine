@@ -72,10 +72,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Image.cpp" />
+    <ClCompile Include="src\Polygon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Image.h" />
+    <ClInclude Include="src\Polygon.h" />
+    <ClInclude Include="src\Scene.h" />
+    <ClInclude Include="src\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

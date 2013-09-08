@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include "Image.h"
-
 std::fstream logFile;
 
 Game::Game(int w, int h) {
@@ -12,7 +10,7 @@ Game::Game(int w, int h) {
 	baseWindowTitle = "Lighting Engine | ";
 }
 
-SDL_Texture *tex;
+m_Polygon *poly;
 
 void Game::init() {
 	//Set up log file
@@ -49,7 +47,14 @@ void Game::init() {
 	resizeWindow(screenWidth, screenHeight);
 
 	//Initialize things here
-	tex = loadTexture(renderer, "pic.png");
+
+	poly = new m_Quad();
+	poly->setVertex(0, vector2f(300, 300));
+	poly->setVertex(1, vector2f(500, 300));
+	poly->setVertex(2, vector2f(500, 200));
+	poly->setVertex(3, vector2f(400, 200));
+
+	//
 
 	logFile << "Finished initializing" << std::endl;
 }
@@ -79,7 +84,7 @@ void Game::resizeWindow(int width, int height) {
 	//glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	glViewport(0, 0, screenWidth, screenHeight);
 
@@ -119,6 +124,7 @@ void Game::run() {
 	bool vSync = false;
 	bool ticked = false;
 	//
+
 
 	while(keepGoing) {
 		ticked = false;
@@ -182,14 +188,22 @@ void Game::onKeydown(SDL_KeyboardEvent *key) {
 void Game::tick() {
 	//Game logic goes here
 
+	//
+
 	ticks++;
 }
 
 void Game::draw() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Draw things here
+	float cols[] = { 1.0f, 0.0f, 1.0f, 1.0f,
+					 0.0f, 0.0f, .5f, 0.0f,
+					 1.0f, 1.0f, 0.0f, 0.5f };
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	poly->draw(cols);
+	//
 
 	SDL_GL_SwapWindow(window);
 }
