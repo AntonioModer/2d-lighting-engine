@@ -25,5 +25,8 @@ public:
 
 	float red, green, blue;
 
+	bool castShadows;
+
 private:
+	void init();
 };

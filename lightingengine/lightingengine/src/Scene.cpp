@@ -16,7 +16,7 @@ Scene::Scene() {
 	poly->setVertex(3, vector2f(450, 350));
 	polygons.push_back(poly);
 
-	Light *l = new Light(vector2f(300, 300), 400);
+	Light *l = new Light(vector2f(800, 600), 400);
 	lights.push_back(l);
 
 	//Create the lighting alpha texture
@@ -34,9 +34,11 @@ Scene::~Scene() {
 void Scene::tick() {
 	int mx, my;
 	Uint32 mouse = SDL_GetMouseState(&mx, &my);
+	//When the mouse is clicked add a light
 	if((mouse & SDL_BUTTON_LEFT) && !(lastMouseState & SDL_BUTTON_LEFT)) {
 		lights.push_back(new Light(vector2f(mx, my), 400));
 	}
+	//Controlt the top light
 	lights[lights.size()-1]->pos = vector2f(mx, my);
 	for(int i=0; i < lights.size(); i++) {
 		lights[i]->tick();
@@ -64,9 +66,11 @@ void Scene::drawLighting() {
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
 
+		//Draw the light alpha
 		glColorMask(false, false, false, true);
 		lights[i]->drawAlpha(this);
 
+		//Draw the light color
 		glColorMask(true, true, true, false);
 		lights[i]->draw(this);
 		individualLightFbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
@@ -80,23 +84,12 @@ void Scene::drawLighting() {
 		fbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
 	}
 	glPopAttrib();
-
-	//Draw geometry
+	
+	//Draw the scene objects
 	fbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
 	glPushAttrib(GL_COLOR_BUFFER_BIT);
-	//glColorMask(true, true, true, false);
-	//Draw the lights (colored and everything)
-	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-	for(int i=0; i < lights.size(); i++) {
-		//lights[i]->draw(this);
-	}
+	glBlendFunc(GL_DST_COLOR, GL_DST_ALPHA); //Blends the scene objects very nicely with the color of the light
 
-	//Draw the scene objects
-	//glBlendFunc(GL_DST_COLOR, GL_ONE);
-	//glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR);
-	//glBlendFunc(GL_SRC_COLOR, GL_ONE);
-
-	glBlendFunc(GL_DST_ALPHA, GL_DST_ALPHA); //THIS ONE
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	for(int i=0; i < polygons.size(); i++) {
 		float cols[] = { 1.0f, 0.0f, .5f, 1.0f,
@@ -104,7 +97,7 @@ void Scene::drawLighting() {
 						 0.0f, 1.0f, 1.0f, 1.0f,
 						 1.0f, 0.0f, .5f, 1.0f,
 						 1.0f, 0.0f, .5f, 1.0f };
-		polygons[i]->draw();
+		polygons[i]->draw(cols);
 	}	
 
 	glPopAttrib();
@@ -112,8 +105,8 @@ void Scene::drawLighting() {
 }
 
 void Scene::draw() {
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 	drawLighting();
 	fbo->draw();
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 }
