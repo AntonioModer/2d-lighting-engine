@@ -1,0 +1,28 @@
+#pragma once
+
+#include "Vector2.h"
+
+#include <math.h>
+
+//The number of points to draw a circle
+#define NUM_POINTS 30
+
+class Scene;
+
+class Light {
+public:
+	Light(vector2f, float);
+
+	void tick();
+
+	void draw(Scene*);
+	void drawAlpha(Scene*);
+	void drawShadows(Scene*);
+
+	vector2f pos;
+	float radius;
+
+	float red, green, blue;
+
+private:
+};

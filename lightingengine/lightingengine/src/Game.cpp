@@ -1,6 +1,7 @@
 #include "Game.h"
 
 std::fstream logFile;
+Uint32 lastMouseState;
 
 Game::Game(int w, int h) {
 	screenWidth = w;
@@ -9,8 +10,6 @@ Game::Game(int w, int h) {
 	keepGoing = false;
 	baseWindowTitle = "Lighting Engine | ";
 }
-
-m_Polygon *poly;
 
 void Game::init() {
 	//Set up log file
@@ -36,6 +35,7 @@ void Game::init() {
 		stop();
 		return;
 	}
+	glewInit();
 	logFile << "Created OpenGL context" << std::endl;
 
 	//Initialize OpenGL
@@ -46,14 +46,10 @@ void Game::init() {
 
 	resizeWindow(screenWidth, screenHeight);
 
+	lastMouseState = 0;
+
 	//Initialize things here
-
-	poly = new m_Quad();
-	poly->setVertex(0, vector2f(300, 300));
-	poly->setVertex(1, vector2f(500, 300));
-	poly->setVertex(2, vector2f(500, 200));
-	poly->setVertex(3, vector2f(400, 200));
-
+	curScene = new Scene();
 	//
 
 	logFile << "Finished initializing" << std::endl;
@@ -81,7 +77,6 @@ void Game::resizeWindow(int width, int height) {
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
-	//glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -95,6 +90,11 @@ void Game::resizeWindow(int width, int height) {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+
+	glDisable(GL_CULL_FACE);
 
 	logFile << "Finished resizing" << std::endl;
 }
@@ -187,9 +187,10 @@ void Game::onKeydown(SDL_KeyboardEvent *key) {
 
 void Game::tick() {
 	//Game logic goes here
-
+	curScene->tick();
 	//
 
+	lastMouseState = SDL_GetMouseState(NULL, NULL);
 	ticks++;
 }
 
@@ -198,11 +199,7 @@ void Game::draw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Draw things here
-	float cols[] = { 1.0f, 0.0f, 1.0f, 1.0f,
-					 0.0f, 0.0f, .5f, 0.0f,
-					 1.0f, 1.0f, 0.0f, 0.5f };
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	poly->draw(cols);
+	curScene->draw();
 	//
 
 	SDL_GL_SwapWindow(window);

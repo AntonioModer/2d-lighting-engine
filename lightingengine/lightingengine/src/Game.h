@@ -3,7 +3,7 @@
 /* Resources:
 
 https://www.youtube.com/watch?v=LL9BrNrO11o
-http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/dynamic-2d-soft-shadows-r2032
+http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/dynamic-2d-soft-shadows-r3065
 
 */
 
@@ -23,9 +23,9 @@ http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theor
 #include <SDL_opengl.h>
 
 #include "Scene.h"
-#include "Polygon.h"
 
 extern std::fstream logFile;
+extern Uint32 lastMouseState;
 
 class Game {
 public:
@@ -52,6 +52,8 @@ private:
 	SDL_Renderer *renderer;
 
 	SDL_GLContext glcontext;
+
+	Scene *curScene;
 
 	int screenWidth, screenHeight;
 	long ticks;

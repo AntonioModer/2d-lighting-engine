@@ -1,4 +1,5 @@
 #include "Polygon.h"
+#include "Game.h"
 
 m_Polygon::m_Polygon(int numVerts) {
 	verticies = new vector2f[numVerts];
@@ -11,7 +12,7 @@ m_Polygon::m_Polygon(int numVerts) {
 void m_Polygon::draw() {
 	glBegin(GL_POLYGON);
 		for(int i=0; i < numVerticies; i++) {
-			glVertex2f(verticies[i].x, verticies[i].y);
+			glVertex3f(verticies[i].x, verticies[i].y, 1.0f);
 		}
 	glEnd();
 }
@@ -20,12 +21,11 @@ void m_Polygon::draw(float *colors) {
 	glBegin(GL_POLYGON);
 		for(int i=0; i < numVerticies; i++) {
 			glColor4f(colors[i*4], colors[i*4+1], colors[i*4+2], colors[i*4+3]);
-			glVertex2f(verticies[i].x, verticies[i].y);
+			glVertex3f(verticies[i].x, verticies[i].y, 1.0f);
 		}
 	glEnd();
 
 	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-	drawNormals();
 }
 
 void m_Polygon::drawNormals() {
