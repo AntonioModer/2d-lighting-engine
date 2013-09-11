@@ -12,6 +12,7 @@ class Scene;
 class Light {
 public:
 	Light(vector2f, float);
+	Light(vector2f, float, float, float, float);
 
 	void tick();
 

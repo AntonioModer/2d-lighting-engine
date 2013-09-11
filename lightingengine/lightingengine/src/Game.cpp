@@ -152,7 +152,7 @@ void Game::run() {
 		if(now > lastFPSTime + 1000) {
 			//Put the FPS and ticks in the window title
 			std::stringstream ss;
-			ss << baseWindowTitle << "FPS: "<< frames << " Ticks: " << ticks;
+			ss << baseWindowTitle << "FPS: "<< frames << " Ticks: " << ticks << " # of Lights: " << curScene->lights.size();
 			SDL_SetWindowTitle(window, ss.str().c_str());
 			lastFPSTime += 1000;
 			frames = 0;

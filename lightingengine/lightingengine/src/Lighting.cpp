@@ -9,6 +9,14 @@ Light::Light(vector2f p, float rad) {
 	blue = (p.x * p.y) / (800 * 600);
 }
 
+Light::Light(vector2f p, float rad, float r, float g, float b) {
+	pos = p;
+	radius = rad;
+	red = r;
+	green = g;
+	blue = b;
+}
+
 void Light::tick() {
 
 }
@@ -27,16 +35,17 @@ void Light::draw(Scene *scene) {
 		}
 	glEnd();
 	//Draw the inner area of the light
+	/*
 	glBegin(GL_TRIANGLE_FAN);
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		glVertex3f(pos.x, pos.y, innerDepth);
+		//glVertex3f(pos.x, pos.y, innerDepth);
 		glColor4f(red, green, blue, 0.0f);
 		for(int i=0; i <= NUM_POINTS; i++) {
 			float angle = i * 2 * M_PI / NUM_POINTS;
 			glVertex3f(pos.x + (cos(angle) * (radius / 8)), pos.y + (sin(angle) * (radius / 8)), innerDepth);
 		}
 	glEnd();
-
+	*/
 	//drawShadows(scene);
 }
 

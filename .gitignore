@@ -27,3 +27,4 @@ lightingengine/lightingengine/log.txt
 *.lastbuildstate
 *.vcxproj
 *.vcxproj.filters
+lightingengine/Debug/log.txt

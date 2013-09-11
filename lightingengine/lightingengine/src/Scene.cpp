@@ -49,7 +49,6 @@ void Scene::drawLighting() {
 	glPushAttrib(GL_VIEWPORT_BIT | GL_COLOR_BUFFER_BIT);
 	
 	glPushAttrib(GL_COLOR_BUFFER_BIT);
-	glColorMask(false, false, false, true);
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -59,14 +58,21 @@ void Scene::drawLighting() {
 	
 	//Draw each light to a seperate frame buffer, then draw that frame buffer to the main one
 	for(int i=0; i < lights.size(); i++) {
+		//glColorMask(false, false, false, true);
 		individualLightFbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
+
+		glColorMask(false, false, false, true);
 		lights[i]->drawAlpha(this);
+
+		glColorMask(true, true, true, false);
+		lights[i]->draw(this);
 		individualLightFbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
-		
+
 		//Draw that frame buffer to the main one
+		glColorMask(true, true, true, true);
 		fbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
@@ -78,11 +84,11 @@ void Scene::drawLighting() {
 	//Draw geometry
 	fbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
 	glPushAttrib(GL_COLOR_BUFFER_BIT);
-	glColorMask(true, true, true, false);
+	//glColorMask(true, true, true, false);
 	//Draw the lights (colored and everything)
 	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
 	for(int i=0; i < lights.size(); i++) {
-		lights[i]->draw(this);
+		//lights[i]->draw(this);
 	}
 
 	//Draw the scene objects
@@ -91,13 +97,14 @@ void Scene::drawLighting() {
 	//glBlendFunc(GL_SRC_COLOR, GL_ONE);
 
 	glBlendFunc(GL_DST_ALPHA, GL_DST_ALPHA); //THIS ONE
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	for(int i=0; i < polygons.size(); i++) {
 		float cols[] = { 1.0f, 0.0f, .5f, 1.0f,
 						 1.0f, 1.0f, .5f, 1.0f,
 						 0.0f, 1.0f, 1.0f, 1.0f,
 						 1.0f, 0.0f, .5f, 1.0f,
 						 1.0f, 0.0f, .5f, 1.0f };
-		polygons[i]->draw(cols);
+		polygons[i]->draw();
 	}	
 
 	glPopAttrib();
