@@ -11,8 +11,8 @@ class Scene;
 
 class Light {
 public:
-	Light(vector2f, float);
-	Light(vector2f, float, float, float, float);
+	Light(vector2f, float, float);
+	Light(vector2f, float, float, float, float, float);
 
 	void tick();
 
@@ -22,6 +22,7 @@ public:
 
 	vector2f pos;
 	float radius;
+	float intensity;
 
 	float red, green, blue;
 

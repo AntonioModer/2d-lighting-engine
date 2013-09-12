@@ -12,7 +12,7 @@ m_Polygon::m_Polygon(int numVerts) {
 void m_Polygon::draw() {
 	glBegin(GL_POLYGON);
 		for(int i=0; i < numVerticies; i++) {
-			glVertex3f(verticies[i].x, verticies[i].y, 1.0f);
+			glVertex3f(verticies[i].x, verticies[i].y, 0.0f);
 		}
 	glEnd();
 }
@@ -21,11 +21,9 @@ void m_Polygon::draw(float *colors) {
 	glBegin(GL_POLYGON);
 		for(int i=0; i < numVerticies; i++) {
 			glColor4f(colors[i*4], colors[i*4+1], colors[i*4+2], colors[i*4+3]);
-			glVertex3f(verticies[i].x, verticies[i].y, 1.0f);
+			glVertex3f(verticies[i].x, verticies[i].y, 0.0f);
 		}
 	glEnd();
-
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 }
 
 void m_Polygon::drawNormals() {
@@ -91,7 +89,7 @@ void m_Polygon::updateNormals() {
 
 void m_Polygon::updateClockwise() {
 	double sum = 0;
-	for(int i=0; i < numVerticies; i++) {
+	for(int i=0; i < numVerticies - 1; i++) {
 		sum += (getVertex(i + 1).x - getVertex(i).x) * (getVertex(i + 1).y + getVertex(i).y);
 	}
 	clockwise = sum > 0;

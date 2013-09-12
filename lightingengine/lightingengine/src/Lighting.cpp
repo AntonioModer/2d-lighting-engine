@@ -1,17 +1,19 @@
 #include "Lighting.h"
 #include "Game.h"
 
-Light::Light(vector2f p, float rad) {
+Light::Light(vector2f p, float rad, float i) {
 	pos = p;
 	radius = rad;
+	intensity = i;
 	red = p.x / 800;
 	green = p.y / 600;
 	blue = (p.x * p.y) / (800 * 600);
 }
 
-Light::Light(vector2f p, float rad, float r, float g, float b) {
+Light::Light(vector2f p, float rad, float i, float r, float g, float b) {
 	pos = p;
 	radius = rad;
+	intensity = i;
 	red = r;
 	green = g;
 	blue = b;
@@ -20,6 +22,7 @@ Light::Light(vector2f p, float rad, float r, float g, float b) {
 void Light::init() {
 	pos = vector2f();
 	radius = 0;
+	intensity = 1.0f;
 	red = 0;
 	green = 0;
 	blue = 0;
@@ -35,7 +38,7 @@ void Light::draw(Scene *scene) {
 	float innerDepth = 0.0f;
 	//The outer area of the light
 	glBegin(GL_TRIANGLE_FAN);
-		glColor4f(red, green, blue, 1.0f);
+		glColor4f(red, green, blue, intensity);
 		glVertex3f(pos.x, pos.y, outerDepth);
 		glColor4f(red, green, blue, 0.0f);
 		for(int i=0; i <= NUM_POINTS; i++) {

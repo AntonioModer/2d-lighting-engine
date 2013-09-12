@@ -9,14 +9,14 @@ Scene::Scene() {
 	poly->setVertex(3, vector2f(250, 150));
 	poly->setVertex(4, vector2f(200, 100));
 	polygons.push_back(poly);
-	poly = new m_Polygon(4);
+	poly = new m_Polygon(3);
 	poly->setVertex(0, vector2f(300, 300));
-	poly->setVertex(1, vector2f(300, 400));
+	poly->setVertex(1, vector2f(400, 300));
 	poly->setVertex(2, vector2f(400, 400));
-	poly->setVertex(3, vector2f(450, 350));
+	//poly->setVertex(3, vector2f(450, 350));
 	polygons.push_back(poly);
 
-	Light *l = new Light(vector2f(800, 600), 400);
+	Light *l = new Light(vector2f(800, 600), 400, .6f);
 	lights.push_back(l);
 
 	//Create the lighting alpha texture
@@ -36,7 +36,7 @@ void Scene::tick() {
 	Uint32 mouse = SDL_GetMouseState(&mx, &my);
 	//When the mouse is clicked add a light
 	if((mouse & SDL_BUTTON_LEFT) && !(lastMouseState & SDL_BUTTON_LEFT)) {
-		lights.push_back(new Light(vector2f(mx, my), 400));
+		lights.push_back(new Light(vector2f(mx, my), 400, .8f));
 	}
 	//Controlt the top light
 	lights[lights.size()-1]->pos = vector2f(mx, my);
@@ -84,7 +84,12 @@ void Scene::drawLighting() {
 		fbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
 	}
 	glPopAttrib();
-	
+}
+
+void Scene::draw() {
+	//glDisable(GL_DEPTH_TEST);
+	drawLighting();
+
 	//Draw the scene objects
 	fbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
 	glPushAttrib(GL_COLOR_BUFFER_BIT);
@@ -102,11 +107,7 @@ void Scene::drawLighting() {
 
 	glPopAttrib();
 	fbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
-}
 
-void Scene::draw() {
-	//glDisable(GL_DEPTH_TEST);
-	drawLighting();
 	fbo->draw();
 	//glEnable(GL_DEPTH_TEST);
 }
