@@ -2,6 +2,7 @@
 #include "Game.h"
 
 Light::Light(vector2f p, float rad, float i) {
+	init();
 	pos = p;
 	radius = rad;
 	intensity = i;
@@ -11,6 +12,7 @@ Light::Light(vector2f p, float rad, float i) {
 }
 
 Light::Light(vector2f p, float rad, float i, float r, float g, float b) {
+	init();
 	pos = p;
 	radius = rad;
 	intensity = i;
@@ -26,7 +28,7 @@ void Light::init() {
 	red = 0;
 	green = 0;
 	blue = 0;
-	castShadows = false;
+	castShadows = true;
 }
 
 void Light::tick() {

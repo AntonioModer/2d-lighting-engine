@@ -16,14 +16,14 @@ Scene::Scene() {
 	//poly->setVertex(3, vector2f(450, 350));
 	polygons.push_back(poly);
 
-	Light *l = new Light(vector2f(800, 600), 400, .6f);
-	lights.push_back(l);
-
 	//Create the lighting alpha texture
 	//http://www.opengl.org/wiki/Framebuffer_Object_Examples
 
 	fbo = new FrameBufferObject(800, 600);
 	individualLightFbo = new FrameBufferObject(800, 600);
+	
+	Light *l = new Light(vector2f(800, 600), 400, .6f);
+	lights.push_back(l);
 }
 
 Scene::~Scene() {
@@ -87,7 +87,6 @@ void Scene::drawLighting() {
 }
 
 void Scene::draw() {
-	//glDisable(GL_DEPTH_TEST);
 	drawLighting();
 
 	//Draw the scene objects
@@ -109,5 +108,4 @@ void Scene::draw() {
 	fbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
 
 	fbo->draw();
-	//glEnable(GL_DEPTH_TEST);
 }

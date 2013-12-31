@@ -49,7 +49,9 @@ void Game::init() {
 	lastMouseState = 0;
 
 	//Initialize things here
+
 	curScene = new Scene();
+
 	//
 
 	logFile << "Finished initializing" << std::endl;
@@ -60,13 +62,13 @@ void Game::deinit() {
 
 	logFile << "Deinitializing" << std::endl;
 
-	logFile.close();
-
 	SDL_GL_DeleteContext(glcontext);
 
 	SDL_DestroyWindow(window);
 
 	SDL_Quit();
+
+	logFile.close();
 }
 
 void Game::resizeWindow(int width, int height) {
