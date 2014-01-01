@@ -28,7 +28,7 @@ void Light::init() {
 	red = 0;
 	green = 0;
 	blue = 0;
-	castShadows = true;
+	castShadows = false;
 }
 
 void Light::tick() {

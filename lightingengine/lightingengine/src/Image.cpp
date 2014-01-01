@@ -8,7 +8,7 @@ SDL_Texture *loadTexture(SDL_Renderer *renderer, std::string filename) {
 
 	if(loadedSurface == NULL) {
 		//There has been an issue
-		std::cout << "Error loading image " << filename << " " << SDL_GetError() << std::endl;
+		std::cerr << "Error loading image " << filename << " " << SDL_GetError() << std::endl;
 	}
 	else {
 		//Continue normally if everything's cool

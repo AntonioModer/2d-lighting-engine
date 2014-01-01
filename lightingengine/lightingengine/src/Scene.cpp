@@ -38,8 +38,9 @@ void Scene::tick() {
 	if((mouse & SDL_BUTTON_LEFT) && !(lastMouseState & SDL_BUTTON_LEFT)) {
 		lights.push_back(new Light(vector2f(mx, my), 400, .8f));
 	}
-	//Controlt the top light
-	lights[lights.size()-1]->pos = vector2f(mx, my);
+	//Control the top light
+	if(lights.size() > 0)
+		lights[lights.size()-1]->pos = vector2f(mx, my);
 	for(int i=0; i < lights.size(); i++) {
 		lights[i]->tick();
 	}
