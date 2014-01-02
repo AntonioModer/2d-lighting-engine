@@ -9,4 +9,4 @@ all:
 	$(MAKE) -C $(BIN) all && ln -sf $(BIN)/main main
 
 clean:
-	rm -f $(BIN)/*.o
+	cd $(BIN) && $(MAKE) clean
