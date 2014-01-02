@@ -6,7 +6,7 @@ OBJS = main.o FrameBufferObject.o Game.o Image.o Lighting.o Polygon.o Scene.o
 LIBS = -lSDL2 -lSDL_image -lGLEW -lGLU
 
 all: 
-	$(MAKE) -C $(BIN) all && ln -sf $(BIN)/main main
+	$(MAKE) -sC $(BIN) all && ln -sf $(BIN)/main main
 
 clean:
-	cd $(BIN) && $(MAKE) clean
+	cd $(BIN) && $(MAKE) -s clean
