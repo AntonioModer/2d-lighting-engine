@@ -1,9 +1,11 @@
 #include "FrameBufferObject.h"
 #include "Game.h"
 
-FrameBufferObject::FrameBufferObject(int w, int h) {
+FrameBufferObject::FrameBufferObject(int w, int h, int numTextures) {
 	width = w;
 	height = h;
+	assert(numTextures > 0 && numTextures < GL_MAX_COLOR_ATTACHMENTS_EXT);
+	textures = std::vector<GLuint>(numTextures);
 
 	//First create the frame buffer
 	glGenFramebuffersEXT(1, &frameBufferId);
@@ -16,15 +18,19 @@ FrameBufferObject::FrameBufferObject(int w, int h) {
 	//Attach the depth buffer to the frame buffer
 	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER_EXT, depthBufferId);
 
-	//Attach a texture to the frame buffer
-	glGenTextures(1, &textureId);
-	bindTexture();
-	//Create the actual texture with no data
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL); 
-	//Attach the texture to the frame buffer
-	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, textureId, 0);
+	//Make textures
+	for(int i=0; i < numTextures; i++) {
+		//Attach a texture to the frame buffer
+		glGenTextures(1, &textures[i]);
+		bindTexture(i);
+		//Create the actual texture with no data
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL); 
+		//Attach the texture to the frame buffer
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, textures[i], 0);
+		unbindTexture();
+	}
 
 	//Make sure everything worked correctly
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
@@ -42,14 +48,14 @@ FrameBufferObject::FrameBufferObject(int w, int h) {
 }
 
 FrameBufferObject::~FrameBufferObject() {
-	glDeleteTextures(1, &textureId);
+	glDeleteTextures(textures.size(), &textures[0]);
 	glDeleteRenderbuffersEXT(1, &depthBufferId);
 	glDeleteFramebuffersEXT(1, &frameBufferId);
 }
 
-void FrameBufferObject::draw() {
-	bindTexture();
-	//glGenerateMipmapEXT(GL_TEXTURE_2D);
+void FrameBufferObject::draw(int id) {
+	bindTexture(id);
+
 	glEnable(GL_TEXTURE_2D);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
@@ -84,12 +90,27 @@ void FrameBufferObject::unbindRenderBuffer(GLenum mode) {
 	glBindRenderbufferEXT(mode, 0);
 }
 
-void FrameBufferObject::bindTexture() {
-	glBindTexture(GL_TEXTURE_2D, textureId);
+void FrameBufferObject::bindTexture(int id) {
+	assert(id >= 0 && id < textures.size());
+	glBindTexture(GL_TEXTURE_2D, textures[id]);
 }
 
 void FrameBufferObject::unbindTexture() {
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void FrameBufferObject::setRenderToTexture(int id) {
+	assert(id >= 0 && id < textures.size());
+	GLenum bufs[] = {GL_COLOR_ATTACHMENT0_EXT + id};
+	glDrawBuffers(1, bufs);
+}
+
+void FrameBufferObject::unsetRenderToTexture() {
+	std::vector<GLenum> bufs(textures.size());
+	for(int i=0; i < bufs.size(); i++) {
+		bufs[i] = GL_COLOR_ATTACHMENT0_EXT + i;
+	}
+	glDrawBuffers(bufs.size(), &bufs[0]);
 }
 
 bool FrameBufferObject::checkStatus(GLenum status) {

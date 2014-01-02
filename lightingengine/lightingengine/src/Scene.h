@@ -20,6 +20,5 @@ public:
 	std::vector<Light*> lights;
 	
 	FrameBufferObject *fbo;
-	FrameBufferObject *individualLightFbo;
 };
 

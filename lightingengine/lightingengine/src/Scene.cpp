@@ -19,8 +19,7 @@ Scene::Scene() {
 	//Create the lighting alpha texture
 	//http://www.opengl.org/wiki/Framebuffer_Object_Examples
 
-	fbo = new FrameBufferObject(800, 600);
-	individualLightFbo = new FrameBufferObject(800, 600);
+	fbo = new FrameBufferObject(800, 600, 2);
 	
 	Light *l = new Light(vector2f(800, 600), 400, .6f);
 	lights.push_back(l);
@@ -28,7 +27,6 @@ Scene::Scene() {
 
 Scene::~Scene() {
 	delete fbo;
-	delete individualLightFbo;
 }
 
 void Scene::tick() {
@@ -50,19 +48,16 @@ void Scene::drawLighting() {
 	//Set up the main fbo
 	fbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
 	glPushAttrib(GL_VIEWPORT_BIT | GL_COLOR_BUFFER_BIT);
-	
-	glPushAttrib(GL_COLOR_BUFFER_BIT);
+
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glViewport(0, 0, fbo->width, fbo->height);
-	fbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
-	//
 	
-	//Draw each light to a seperate frame buffer, then draw that frame buffer to the main one
+	//Draw each light to a secondary texture, then draw that one to the primary
 	for(int i=0; i < lights.size(); i++) {
-		//glColorMask(false, false, false, true);
-		individualLightFbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
+		//Draw to secondary texture
+		fbo->setRenderToTexture(1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
@@ -74,16 +69,17 @@ void Scene::drawLighting() {
 		//Draw the light color
 		glColorMask(true, true, true, false);
 		lights[i]->draw(this);
-		individualLightFbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
 
-		//Draw that frame buffer to the main one
 		glColorMask(true, true, true, true);
-		fbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
+
+		//Draw second texture to the first one
+		fbo->setRenderToTexture(0);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		individualLightFbo->draw();
-		fbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
+		fbo->draw(1);
 	}
+	fbo->unsetRenderToTexture();
+	fbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
 	glPopAttrib();
 }
 
@@ -92,6 +88,7 @@ void Scene::draw() {
 
 	//Draw the scene objects
 	fbo->bindFrameBuffer(GL_FRAMEBUFFER_EXT);
+	fbo->setRenderToTexture(0);
 	glPushAttrib(GL_COLOR_BUFFER_BIT);
 	glBlendFunc(GL_DST_COLOR, GL_DST_ALPHA); //Blends the scene objects very nicely with the color of the light
 
@@ -108,5 +105,5 @@ void Scene::draw() {
 	glPopAttrib();
 	fbo->unbindFrameBuffer(GL_FRAMEBUFFER_EXT);
 
-	fbo->draw();
+	fbo->draw(0);
 }

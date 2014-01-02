@@ -16,7 +16,7 @@ void Game::init() {
 	logFile.open("log.txt", std::fstream::out);
 	//Make std::cerr redirect to the log file
 	std::cerr.rdbuf(logFile.rdbuf());
-	
+
 	logFile << "Initializing...\n";
 
 	SDL_Init(SDL_INIT_EVERYTHING);
